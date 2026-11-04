@@ -1,19 +1,35 @@
 const $ = (id) => document.getElementById(id);
 
 const formatarPreco = (valor) =>
-  valor.toLocaleString("pt-BR", {
+  Number(valor).toLocaleString("pt-BR", {
     style: "currency",
     currency: "BRL"
   });
 
+function salvar(chave, valor) {
+  try {
+    localStorage.setItem(chave, JSON.stringify(valor));
+    return true;
+  } catch (erro) {
+    return false;
+  }
+}
+
+function carregar(chave, valorPadrao) {
+  try {
+    const salvo = localStorage.getItem(chave);
+    return salvo ? JSON.parse(salvo) : valorPadrao;
+  } catch (erro) {
+    return valorPadrao;
+  }
+}
+
 function mostrarToast(mensagem) {
   const toast = $("toast");
-
   toast.textContent = mensagem;
   toast.classList.add("show");
 
   clearTimeout(mostrarToast.timer);
-
   mostrarToast.timer = setTimeout(() => {
     toast.classList.remove("show");
   }, 2200);
@@ -27,35 +43,42 @@ function aplicarTema(escuro) {
   document.documentElement.dataset.tema = escuro ? "escuro" : "claro";
 
   $("modoEscuro").setAttribute("aria-pressed", String(escuro));
-
   $("modoEscuro").setAttribute(
     "aria-label",
     escuro ? "Ativar modo claro" : "Ativar modo escuro"
   );
 
-  $("iconeTema").textContent = escuro ? "☀" : "☾";
+  $("iconeTema").textContent = escuro ? "☀️" : "🌑";
 
   document.querySelector('meta[name="theme-color"]').content =
     escuro ? "#101216" : "#f7f8fa";
 }
 
-let temaInicial = false;
-
-try {
-  temaInicial = localStorage.getItem(chaveTema) === "escuro";
-} catch (erro) {}
-
-aplicarTema(temaInicial);
+aplicarTema(carregar(chaveTema, "claro") === "escuro");
 
 $("modoEscuro").addEventListener("click", () => {
   const escuro = document.documentElement.dataset.tema !== "escuro";
 
   aplicarTema(escuro);
+  salvar(chaveTema, escuro ? "escuro" : "claro");
+});
 
-  try {
-    localStorage.setItem(chaveTema, escuro ? "escuro" : "claro");
-  } catch (erro) {
-    mostrarToast("O tema mudou, mas não foi possível salvar a preferência.");
+// ATALHO PARA A PESQUISA
+
+document.addEventListener("keydown", (evento) => {
+  if (
+    (evento.ctrlKey || evento.metaKey) &&
+    evento.key.toLowerCase() === "k"
+  ) {
+    evento.preventDefault();
+    $("pesquisa").focus();
+  }
+
+  if (evento.key === "Escape" && document.activeElement === $("pesquisa")) {
+    $("pesquisa").value = "";
+    filtrarLivros("");
+    botoesCategoria.forEach((b) => b.classList.remove("active"));
+    $("pesquisa").blur();
   }
 });
 
@@ -71,6 +94,7 @@ function personalizarBoasVindas() {
     $("mensagemBoasVindas").textContent =
       "Sua experiência começa por aqui.";
 
+    salvar("mercadolivro-nome", "");
     return;
   }
 
@@ -80,7 +104,15 @@ function personalizarBoasVindas() {
   $("mensagemBoasVindas").textContent =
     `Bem-vindo(a) ao MercadoLivro, ${nome}!`;
 
+  salvar("mercadolivro-nome", nome);
   mostrarToast(`Página personalizada para ${nome}.`);
+}
+
+const nomeSalvo = carregar("mercadolivro-nome", "");
+
+if (nomeSalvo) {
+  $("nomeUsuario").value = nomeSalvo;
+  personalizarBoasVindas();
 }
 
 $("atualizarTitulo").addEventListener("click", personalizarBoasVindas);
@@ -95,7 +127,6 @@ $("nomeUsuario").addEventListener("keydown", (evento) => {
 
 function filtrarLivros(termo) {
   const busca = termo.trim().toLocaleLowerCase("pt-BR");
-
   const cards = [...document.querySelectorAll(".product-card")];
 
   let encontrados = 0;
@@ -120,18 +151,18 @@ function filtrarLivros(termo) {
   $("semResultado").hidden = encontrados !== 0;
 }
 
-$("pesquisa").addEventListener("input", (evento) => {
-  filtrarLivros(evento.target.value);
-});
-
 // FILTRO POR CATEGORIA
 
-document.querySelectorAll(".category-tile").forEach((botao) => {
+const botoesCategoria = document.querySelectorAll(".category-tile");
+
+botoesCategoria.forEach((botao) => {
   botao.addEventListener("click", () => {
     const categoria = botao.dataset.categoria;
 
-    $("pesquisa").value = categoria;
+    botoesCategoria.forEach((b) => b.classList.remove("active"));
+    botao.classList.add("active");
 
+    $("pesquisa").value = categoria;
     filtrarLivros(categoria);
 
     $("livros").scrollIntoView({
@@ -140,13 +171,29 @@ document.querySelectorAll(".category-tile").forEach((botao) => {
   });
 });
 
+$("pesquisa").addEventListener("input", (evento) => {
+  if (evento.target.value.trim() === "") {
+    botoesCategoria.forEach((b) => b.classList.remove("active"));
+  }
+  filtrarLivros(evento.target.value);
+});
+
 // MAIS VENDIDOS
 
-const maisVendidos = [
+const listaPadrao = [
   "Código Limpo",
   "Python Crash Course",
   "O Programador Pragmático"
 ];
+
+let maisVendidos = carregar(
+  "mercadolivro-mais-vendidos",
+  listaPadrao
+);
+
+if (!Array.isArray(maisVendidos) || maisVendidos.length !== 3) {
+  maisVendidos = [...listaPadrao];
+}
 
 function renderizarMaisVendidos() {
   const lista = $("listaMaisVendidos");
@@ -164,7 +211,6 @@ function renderizarMaisVendidos() {
 
 $("atualizarMaisVendido").addEventListener("click", () => {
   const nome = $("nomeMaisVendido").value.trim();
-
   const posicao = Number($("posicaoMaisVendido").value);
 
   const aviso = $("avisoMaisVendido");
@@ -185,10 +231,10 @@ $("atualizarMaisVendido").addEventListener("click", () => {
 
   maisVendidos[posicao - 1] = nome;
 
+  salvar("mercadolivro-mais-vendidos", maisVendidos);
   renderizarMaisVendidos();
 
   aviso.textContent = `A posição ${posicao} foi atualizada.`;
-
   aviso.className = "feedback";
 
   $("nomeMaisVendido").value = "";
@@ -222,13 +268,28 @@ $("consultarLancamento").addEventListener("click", () => {
   }
 
   resultado.textContent = lancamentos[numero - 1];
-
   resultado.className = "feedback";
 });
 
 // CARRINHO DE COMPRAS
 
-const carrinho = [];
+let carrinho = carregar("mercadolivro-carrinho", []);
+
+if (!Array.isArray(carrinho)) {
+  carrinho = [];
+}
+
+carrinho = carrinho.filter((livro) =>
+  livro &&
+  typeof livro.nome === "string" &&
+  Number.isFinite(Number(livro.preco)) &&
+  Number.isInteger(Number(livro.quantidade)) &&
+  Number(livro.quantidade) > 0
+).map((livro) => ({
+  nome: livro.nome,
+  preco: Number(livro.preco),
+  quantidade: Number(livro.quantidade)
+}));
 
 function atualizarCarrinho() {
   const lista = $("listaCarrinho");
@@ -251,7 +312,6 @@ function atualizarCarrinho() {
 
   carrinho.forEach((livro, indice) => {
     quantidadeTotal += livro.quantidade;
-
     valorTotal += livro.preco * livro.quantidade;
 
     const item = document.createElement("li");
@@ -355,10 +415,11 @@ function atualizarCarrinho() {
   });
 
   $("quantidade").textContent = quantidadeTotal;
-
   $("quantidadeCarrinho").textContent = quantidadeTotal;
-
   $("total").textContent = formatarPreco(valorTotal);
+  $("avisoCarrinho").textContent = "";
+
+  salvar("mercadolivro-carrinho", carrinho);
 }
 
 // ADICIONAR LIVROS
@@ -366,8 +427,12 @@ function atualizarCarrinho() {
 document.querySelectorAll(".add-button").forEach((botao) => {
   botao.addEventListener("click", () => {
     const nome = botao.dataset.nome;
-
     const preco = Number(botao.dataset.preco);
+
+    if (!nome || !Number.isFinite(preco) || preco < 0) {
+      mostrarToast("Não foi possível adicionar este livro.");
+      return;
+    }
 
     const existente = carrinho.find(
       (livro) => livro.nome === nome
@@ -398,7 +463,7 @@ $("esvaziar").addEventListener("click", () => {
     return;
   }
 
-  carrinho.length = 0;
+  carrinho = [];
 
   atualizarCarrinho();
 
@@ -407,35 +472,75 @@ $("esvaziar").addEventListener("click", () => {
 
 // PRÉVIA DO LIVRO
 
-$("gerarPrevia").addEventListener("click", () => {
+function mostrarPrevia(nome, preco, categoria, descricao, imagemSrc) {
   const area = $("areaPrevia");
 
-  if (area.childElementCount) {
-    mostrarToast("A prévia já está aberta.");
-
+  if (area.dataset.livro === nome) {
+    area.replaceChildren();
+    area.dataset.livro = "";
     return;
   }
 
+  area.dataset.livro = nome;
+  area.replaceChildren();
+
   const imagem = document.createElement("img");
+  imagem.src = imagemSrc;
+  imagem.alt = "Capa do livro " + nome;
+  imagem.style.width = "75px";
+  imagem.style.maxHeight = "110px";
+  imagem.style.objectFit = "contain";
 
-  imagem.src =
-    "https://covers.openlibrary.org/b/isbn/9780132350884-L.jpg";
+  const info = document.createElement("div");
 
-  imagem.alt = "Capa do livro Código Limpo";
+  const cat = document.createElement("span");
+  cat.style.display = "block";
+  cat.style.color = "var(--blue)";
+  cat.style.fontSize = "9px";
+  cat.style.fontWeight = "800";
+  cat.style.letterSpacing = "1px";
+  cat.style.marginBottom = "4px";
+  cat.textContent = categoria;
 
-  const texto = document.createElement("p");
+  const titulo = document.createElement("strong");
+  titulo.style.display = "block";
+  titulo.style.fontSize = "15px";
+  titulo.style.lineHeight = "1.3";
+  titulo.style.marginBottom = "6px";
+  titulo.textContent = nome;
 
-  texto.textContent =
-    "Código Limpo — uma leitura sobre qualidade e manutenção de software.";
+  const desc = document.createElement("p");
+  desc.style.color = "var(--muted)";
+  desc.style.fontSize = "12px";
+  desc.style.lineHeight = "1.5";
+  desc.style.marginBottom = "8px";
+  desc.textContent = descricao;
+
+  const price = document.createElement("span");
+  price.style.fontWeight = "700";
+  price.style.fontSize = "14px";
+  price.textContent = formatarPreco(preco);
+
+  info.append(cat, titulo, desc, price);
 
   imagem.addEventListener("error", () => {
     imagem.remove();
-
-    texto.textContent =
-      "A capa da prévia não carregou. Confira sua conexão com a internet.";
   });
 
-  area.append(imagem, texto);
+  area.append(imagem, info);
+}
+
+document.querySelectorAll(".preview-button").forEach((botao) => {
+  botao.addEventListener("click", () => {
+    const nome = botao.dataset.nome;
+    const preco = Number(botao.dataset.preco);
+    const categoria = botao.dataset.categoria;
+    const descricao = botao.dataset.descricao;
+    const imagem = botao.dataset.imagem;
+
+    mostrarPrevia(nome, preco, categoria, descricao, imagem);
+    $("previa").scrollIntoView({ behavior: "smooth", block: "center" });
+  });
 });
 
 // AVISO PARA CAPAS QUE NÃO CARREGAREM
@@ -449,7 +554,6 @@ document.querySelectorAll(".cover img").forEach((imagem) => {
     const aviso = document.createElement("span");
 
     aviso.className = "cover-fallback";
-
     aviso.textContent = imagem.alt;
 
     capa.appendChild(aviso);
@@ -463,5 +567,4 @@ $("ano").textContent = new Date().getFullYear();
 // INICIALIZAÇÃO
 
 renderizarMaisVendidos();
-
 atualizarCarrinho();
