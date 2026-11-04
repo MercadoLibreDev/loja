@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#f7f8fa">
+  <title>MercadoLivro — Tecnologia começa com conhecimento</title>
+  <link rel="stylesheet" href="src/css/estilo.css">
+  <script src="src/js/script.js" defer></script>
+</head>
+<body>
+  <header class="header">
+    <div class="header-inner">
+      <a class="brand" href="#" aria-label="MercadoLivro, página inicial">
+        <span class="brand-mark">M<span>L</span></span>
+        <span class="brand-name">Mercado<span>Livro</span></span>
+      </a>
+
+      <label class="search-box">
+        <span aria-hidden="true">⌕</span>
+        <input id="pesquisa" type="search" placeholder="Buscar por livro, autor ou tecnologia..." autocomplete="off">
+        <kbd>⌘ K</kbd>
+      </label>
+
+      <nav class="main-nav" aria-label="Navegação principal">
+        <a href="#livros">Livros</a>
+        <a href="#categorias">Categorias</a>
+        <a href="#mais-vendidos">Destaques</a>
+      </nav>
+
+      <div class="header-actions">
+        <button class="theme-toggle" id="modoEscuro" type="button" aria-label="Ativar modo escuro" aria-pressed="false">
+          <span id="iconeTema" aria-hidden="true">☾</span>
+        </button>
+        <a class="cart-link" href="#carrinho">
+          <span aria-hidden="true">♧</span>
+          <span class="cart-label">Carrinho</span>
+          <span class="cart-count" id="quantidade">0</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="hero-copy">
+        <div class="eyebrow"><span class="eyebrow-dot"></span> LIVRARIA PARA QUEM GOSTA DE TECNOLOGIA</div>
+        <h1>Ideias melhores começam com <em>boas leituras.</em></h1>
+        <p>Programação, inteligência artificial, algoritmos e criatividade. Encontre o próximo livro que vai ampliar suas possibilidades.</p>
+        <div class="hero-actions">
+          <a class="button button-primary" href="#livros">Explorar biblioteca <span>→</span></a>
+          <a class="text-link" href="#categorias">Conhecer categorias</a>
+        </div>
+
+        <div class="welcome-tool">
+          <label for="nomeUsuario">Personalize sua visita</label>
+          <div class="welcome-row">
+            <input id="nomeUsuario" type="text" maxlength="35" placeholder="Digite seu nome">
+            <button id="atualizarTitulo" type="button">Aplicar</button>
+          </div>
+          <p id="mensagemBoasVindas" aria-live="polite">Sua experiência começa por aqui.</p>
+        </div>
+      </div>
+
+      <div class="hero-art">
+        <div class="hero-art-top"><span>READ</span><span>LEARN</span><span>BUILD</span></div>
+        <div class="book-stack">
+          <div class="book book-one"><small>THE ART OF</small><strong>CODE</strong><span>THINK · BUILD · CREATE</span></div>
+          <div class="book book-two"><small>IDEAS INTO</small><strong>REALITY</strong><span>TECHNOLOGY & DESIGN</span></div>
+          <div class="book book-three"><small>LEARN EVERY DAY</small><strong>∞</strong><span>KNOWLEDGE IS POWER</span></div>
+        </div>
+        <div class="hero-art-note">CONHECIMENTO EM MOVIMENTO <span>✳</span></div>
+      </div>
+    </section>
+
+    <section class="trust-strip">
+      <div><strong>01</strong><span>Curadoria tech</span></div>
+      <div><strong>02</strong><span>Livros para aprender</span></div>
+      <div><strong>03</strong><span>Conhecimento sem limites</span></div>
+    </section>
+
+    <section class="section" id="categorias">
+      <div class="section-heading">
+        <div>
+          <span class="section-kicker">EXPLORE POR ASSUNTO</span>
+          <h2>Universos tecnológicos</h2>
+          <p>Encontre uma área e comece a explorar.</p>
+        </div>
+      </div>
+
+      <div class="category-grid">
+        <button class="category-tile" data-categoria="programação">
+          <span class="category-symbol">&lt;/&gt;</span>
+          <span><strong>Programação</strong><small>Código e boas práticas</small></span>
+          <b>↗</b>
+        </button>
+
+        <button class="category-tile" data-categoria="python">
+          <span class="category-symbol">Py</span>
+          <span><strong>Python</strong><small>Automação e projetos</small></span>
+          <b>↗</b>
+        </button>
+
+        <button class="category-tile" data-categoria="algoritmos">
+          <span class="category-symbol">⌘</span>
+          <span><strong>Algoritmos</strong><small>Lógica e resolução</small></span>
+          <b>↗</b>
+        </button>
+
+        <button class="category-tile" data-categoria="inteligência artificial">
+          <span class="category-symbol">✳</span>
+          <span><strong>Inteligência artificial</strong><small>Ideias para o futuro</small></span>
+          <b>↗</b>
+        </button>
+      </div>
+    </section>
+
+    <section class="section" id="livros">
+      <div class="section-heading books-heading">
+        <div>
+          <span class="section-kicker">BIBLIOTECA MERCADOLIVRO</span>
+          <h2>Livros para expandir ideias</h2>
+          <p>Uma seleção para estudantes, desenvolvedores e curiosos.</p>
+        </div>
+        <span class="result-count" id="infoBusca">6 livros</span>
+      </div>
+
+      <div class="book-grid" id="gradeLivros">
+        <article class="product-card" data-categorias="programação desenvolvimento código">
+          <div class="cover">
+            <img src="src/assets/codigo-limpo.png.png" alt="Capa de Código Limpo">
+            <span class="cover-tag">ESSENCIAL</span>
+          </div>
+          <div class="product-info">
+            <span class="product-category">PROGRAMAÇÃO</span>
+            <h3>Código Limpo</h3>
+            <p>Como escrever código claro, organizado e fácil de manter.</p>
+            <div class="product-bottom">
+              <strong>R$ 89,90</strong>
+              <button class="add-button" data-nome="Código Limpo" data-preco="89.90">Adicionar <span>+</span></button>
+            </div>
+          </div>
+        </article>
+
+        <article class="product-card" data-categorias="python programação projetos">
+          <div class="cover">
+            <img src="src/assets/python-crash-course.png.png" alt="Capa de Python Crash Course">
+            <span class="cover-tag">NA PRÁTICA</span>
+          </div>
+          <div class="product-info">
+            <span class="product-category">PYTHON</span>
+            <h3>Python Crash Course</h3>
+            <p>Aprenda Python construindo projetos desde o início.</p>
+            <div class="product-bottom">
+              <strong>R$ 79,90</strong>
+              <button class="add-button" data-nome="Python Crash Course" data-preco="79.90">Adicionar <span>+</span></button>
+            </div>
+          </div>
+        </article>
+
+        <article class="product-card" data-categorias="programação desenvolvimento carreira">
+          <div class="cover">
+            <img src="src/assets/programador-pragmatico.png" alt="Capa de O Programador Pragmático">
+            <span class="cover-tag">CARREIRA</span>
+          </div>
+          <div class="product-info">
+            <span class="product-category">DESENVOLVIMENTO</span>
+            <h3>O Programador Pragmático</h3>
+            <p>Hábitos, decisões e princípios para evoluir como profissional.</p>
+            <div class="product-bottom">
+              <strong>R$ 99,90</strong>
+              <button class="add-button" data-nome="O Programador Pragmático" data-preco="99.90">Adicionar <span>+</span></button>
+            </div>
+          </div>
+        </article>
+
+        <article class="product-card" data-categorias="inteligência artificial tecnologia futuro">
+          <div class="cover">
+            <img src="src/assets/vida-3-0.png" alt="Capa de Vida 3.0">
+            <span class="cover-tag">FUTURO</span>
+          </div>
+          <div class="product-info">
+            <span class="product-category">INTELIGÊNCIA ARTIFICIAL</span>
+            <h3>Vida 3.0</h3>
+            <p>Uma reflexão sobre o futuro da inteligência artificial.</p>
+            <div class="product-bottom">
+              <strong>R$ 69,90</strong>
+              <button class="add-button" data-nome="Vida 3.0" data-preco="69.90">Adicionar <span>+</span></button>
+            </div>
+          </div>
+        </article>
+
+        <article class="product-card" data-categorias="algoritmos programação lógica">
+          <div class="cover">
+            <img src="src/assets/entendendo-algoritmos.png" alt="Capa de Entendendo Algoritmos">
+            <span class="cover-tag">FUNDAMENTOS</span>
+          </div>
+          <div class="product-info">
+            <span class="product-category">ALGORITMOS</span>
+            <h3>Entendendo Algoritmos</h3>
+            <p>Conceitos de algoritmos explicados com ilustrações.</p>
+            <div class="product-bottom">
+              <strong>R$ 74,90</strong>
+              <button class="add-button" data-nome="Entendendo Algoritmos" data-preco="74.90">Adicionar <span>+</span></button>
+            </div>
+          </div>
+        </article>
+
+        <article class="product-card" data-categorias="javascript programação desenvolvimento web">
+          <div class="cover">
+            <img src="src/assets/eloquent-javascript.png" alt="Capa de Eloquent JavaScript">
+            <span class="cover-tag">WEB</span>
+          </div>
+          <div class="product-info">
+            <span class="product-category">JAVASCRIPT</span>
+            <h3>Eloquent JavaScript</h3>
+            <p>Aprenda JavaScript e os fundamentos do desenvolvimento web.</p>
+            <div class="product-bottom">
+              <strong>R$ 84,90</strong>
+              <button class="add-button" data-nome="Eloquent JavaScript" data-preco="84.90">Adicionar <span>+</span></button>
+            </div>
+          </div>
+        </article>
+      </div>
+
+      <div class="empty-state" id="semResultado" hidden>Nenhum livro encontrado. Tente outra busca.</div>
+    </section>
+
+    <section class="section feature-grid">
+      <div class="panel" id="mais-vendidos">
+        <div class="panel-heading">
+          <div><span class="section-kicker">EM DESTAQUE</span><h2>Mais vendidos</h2></div>
+          <span class="panel-icon">↗</span>
+        </div>
+        <ol class="bestseller-list" id="listaMaisVendidos"></ol>
+        <div class="admin-fields">
+          <input type="text" id="nomeMaisVendido" placeholder="Nome do livro">
+          <input type="number" id="posicaoMaisVendido" min="1" max="3" placeholder="Posição (1 a 3)">
+          <button id="atualizarMaisVendido">Atualizar lista</button>
+        </div>
+        <p class="feedback" id="avisoMaisVendido" aria-live="polite"></p>
+      </div>
+
+      <div class="panel">
+        <div class="panel-heading">
+          <div><span class="section-kicker">FIQUE POR DENTRO</span><h2>Lançamentos</h2></div>
+          <span class="panel-icon">✳</span>
+        </div>
+        <p class="panel-description">Consulte os temas previstos para cada mês.</p>
+        <ol class="month-list">
+          <li>Janeiro <span>01</span></li>
+          <li>Fevereiro <span>02</span></li>
+          <li>Março <span>03</span></li>
+          <li>Abril <span>04</span></li>
+        </ol>
+        <div class="admin-fields">
+          <input type="number" id="numeroLancamento" min="1" max="4" placeholder="Número do mês (1 a 4)">
+          <button id="consultarLancamento">Consultar</button>
+        </div>
+        <p class="feedback" id="resultadoLancamento" aria-live="polite"></p>
+      </div>
+    </section>
+
+    <section class="section feature-grid">
+      <div class="panel cart-panel" id="carrinho">
+        <div class="panel-heading">
+          <div><span class="section-kicker">SUA SELEÇÃO</span><h2>Seu carrinho <span class="inline-count" id="quantidadeCarrinho">0</span></h2></div>
+          <span class="panel-icon">＋</span>
+        </div>
+        <ul class="cart-list" id="listaCarrinho">
+          <li class="cart-empty">Seu carrinho está vazio. Adicione um livro para começar.</li>
+        </ul>
+        <div class="cart-summary"><span>Total</span><strong id="total">R$ 0,00</strong></div>
+        <button class="clear-cart" id="esvaziar" type="button">Esvaziar carrinho</button>
+        <p class="feedback" id="avisoCarrinho" aria-live="polite"></p>
+      </div>
+
+      <div class="panel preview-panel">
+        <div class="panel-heading">
+          <div><span class="section-kicker">OLHE POR DENTRO</span><h2>Prévia de leitura</h2></div>
+          <span class="panel-icon">▤</span>
+        </div>
+        <p class="panel-description">Veja a capa de um dos títulos da nossa seleção.</p>
+        <button class="preview-button" id="gerarPrevia">Ver prévia de Código Limpo <span>→</span></button>
+        <div id="areaPrevia" class="preview-area"></div>
+      </div>
+    </section>
+
+    <section class="account-banner" id="conta">
+      <div>
+        <span class="section-kicker">MERCADOLIVRO</span>
+        <h2>Seu próximo aprendizado está aqui.</h2>
+        <p>Explore, descubra e leve novas ideias com você.</p>
+      </div>
+      <a href="#livros" class="button button-light">Escolher meus livros <span>→</span></a>
+    </section>
+  </main>
+
+  <footer>
+    <a class="footer-brand" href="#">ML · MercadoLivro</a>
+    <span>© <span id="ano"></span> MercadoLivro. Projeto acadêmico.</span>
+  </footer>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+</body>
+</html>
